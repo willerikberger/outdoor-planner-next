@@ -11,7 +11,11 @@
       "Bash(npx eslint:*)",
       "Bash(npx tsc:*)",
       "Bash(npm run build:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(xargs cat:*)",
+      "Bash(grep:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
