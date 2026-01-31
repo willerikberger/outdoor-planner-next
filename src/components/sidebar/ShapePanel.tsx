@@ -1,0 +1,74 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ColorPicker } from '@/components/ui/ColorPicker'
+import { usePlannerStore } from '@/lib/store'
+import { SHAPE_COLORS, DEFAULTS } from '@/lib/constants'
+
+interface ShapePanelProps {
+  onAddShape: (name: string, widthM: number, heightM: number) => void
+}
+
+export function ShapePanel({ onAddShape }: ShapePanelProps) {
+  const [name, setName] = useState('')
+  const [width, setWidth] = useState(String(DEFAULTS.shapeWidthM))
+  const [height, setHeight] = useState(String(DEFAULTS.shapeHeightM))
+  const selectedColor = usePlannerStore((s) => s.selectedColor)
+  const setSelectedColor = usePlannerStore((s) => s.setSelectedColor)
+  const pixelsPerMeter = usePlannerStore((s) => s.pixelsPerMeter)
+
+  const handleAdd = () => {
+    const w = parseFloat(width) || DEFAULTS.shapeWidthM
+    const h = parseFloat(height) || DEFAULTS.shapeHeightM
+    const n = name || `Shape ${usePlannerStore.getState().objectIdCounter + 1}`
+    onAddShape(n, w, h)
+    setName('')
+  }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <Label className="text-[#aaa] text-xs">Shape Name</Label>
+        <Input
+          type="text"
+          placeholder="e.g. Garden Bed, Patio"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <Label className="text-[#aaa] text-xs">Width (m)</Label>
+          <Input
+            type="number"
+            step="0.1"
+            min="0.1"
+            value={width}
+            onChange={(e) => setWidth(e.target.value)}
+          />
+        </div>
+        <div className="flex-1">
+          <Label className="text-[#aaa] text-xs">Height (m)</Label>
+          <Input
+            type="number"
+            step="0.1"
+            min="0.1"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+          />
+        </div>
+      </div>
+      <div>
+        <Label className="text-[#aaa] text-xs">Color</Label>
+        <ColorPicker colors={SHAPE_COLORS} selected={selectedColor} onSelect={setSelectedColor} />
+      </div>
+      <Button onClick={handleAdd} disabled={!pixelsPerMeter}>
+        Add Shape
+      </Button>
+      {!pixelsPerMeter && <p className="text-xs text-[#666]">Set scale first to add shapes</p>}
+    </div>
+  )
+}
